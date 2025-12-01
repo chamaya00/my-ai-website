@@ -1,0 +1,36 @@
+# Google Cloud Run configuration
+# This file is optional - deployment script handles everything
+# But you can customize settings here if needed
+
+# Backend service configuration
+backend:
+  service: clothing-recommender-backend
+  runtime: python311
+  env: standard
+
+  # Environment variables (set via deployment script)
+  # ANTHROPIC_API_KEY: from environment
+  # SERPAPI_KEY: from environment
+
+  # Resources
+  instance_class: F1
+  automatic_scaling:
+    min_instances: 0
+    max_instances: 10
+    target_cpu_utilization: 0.6
+
+# Frontend service configuration
+frontend:
+  service: clothing-recommender-frontend
+  runtime: nodejs18
+  env: standard
+
+  # Environment variables (set via deployment script)
+  # NEXT_PUBLIC_API_URL: from environment
+
+  # Resources
+  instance_class: F1
+  automatic_scaling:
+    min_instances: 0
+    max_instances: 10
+    target_cpu_utilization: 0.6

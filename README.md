@@ -2,12 +2,24 @@
 
 An intelligent web app that helps you find similar clothing items online. Upload a photo of clothing you love, and our AI will analyze it and search for similar items across online retailers.
 
+## 🚀 Quick Start Options
+
+### Deploy from iPhone (Recommended for Mobile-Only Users)
+**No laptop needed!** Deploy directly from Google Cloud Shell on your iPhone.
+
+📱 **[iPhone Quick Start Guide →](QUICKSTART_IPHONE.md)** (5 minutes)
+📱 **[Detailed iPhone Deployment Guide →](DEPLOY_FROM_IPHONE.md)** (Complete instructions)
+
+### Run Locally (For Development)
+See the [Local Development Setup](#quick-start) section below.
+
 ## Features
 
 - **AI Vision Analysis**: Uses Claude AI to analyze clothing items and extract features like type, color, style, pattern, and material
 - **Smart Search**: Automatically searches Google Shopping for similar items based on AI analysis
 - **Beautiful UI**: Modern, responsive interface built with Next.js and Tailwind CSS
 - **Fast Results**: Parallel processing and caching for quick results
+- **Mobile Friendly**: Works perfectly on iPhone and all mobile devices
 
 ## Architecture
 
@@ -15,6 +27,7 @@ An intelligent web app that helps you find similar clothing items online. Upload
 - **Backend**: Python FastAPI with async support
 - **AI**: Anthropic Claude 3.5 Sonnet (Vision)
 - **Search**: SerpAPI (Google Shopping)
+- **Deployment**: Google Cloud Run (serverless)
 
 ## Prerequisites
 
