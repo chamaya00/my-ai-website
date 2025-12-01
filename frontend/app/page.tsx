@@ -40,7 +40,7 @@ export default function Home() {
 
     try {
       // Send image to backend for analysis
-      const response = await fetch('http://localhost:8000/api/analyze', {
+      const response = await fetch('/api/analyze', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -48,13 +48,16 @@ export default function Home() {
         body: JSON.stringify({ image: imageData }),
       })
 
-      if (!response.ok) throw new Error('Analysis failed')
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Analysis failed' }))
+        throw new Error(errorData.error || 'Analysis failed')
+      }
 
       const data = await response.json()
       setAnalysis(data.features)
     } catch (error) {
       console.error('Error analyzing image:', error)
-      alert('Failed to analyze image. Make sure the backend is running.')
+      alert(`Failed to analyze image: ${error instanceof Error ? error.message : 'Unknown error'}`)
     } finally {
       setIsAnalyzing(false)
     }
@@ -65,7 +68,7 @@ export default function Home() {
 
     setIsSearching(true)
     try {
-      const response = await fetch('http://localhost:8000/api/search', {
+      const response = await fetch('/api/search', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -73,13 +76,16 @@ export default function Home() {
         body: JSON.stringify({ features: analysis }),
       })
 
-      if (!response.ok) throw new Error('Search failed')
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Search failed' }))
+        throw new Error(errorData.error || 'Search failed')
+      }
 
       const data = await response.json()
       setSearchResults(data.results)
     } catch (error) {
       console.error('Error searching:', error)
-      alert('Failed to search. Make sure the backend is running and SerpAPI key is configured.')
+      alert(`Failed to search: ${error instanceof Error ? error.message : 'Unknown error'}`)
     } finally {
       setIsSearching(false)
     }
