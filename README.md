@@ -4,7 +4,13 @@ An intelligent web app that helps you find similar clothing items online. Upload
 
 ## 🚀 Quick Start Options
 
-### Deploy from iPhone (Recommended for Mobile-Only Users)
+### Deploy to Vercel (Recommended - Easiest!)
+**Serverless, zero-config deployment.** The entire app (frontend + backend) runs on Vercel.
+
+🚀 **[Vercel Deployment Guide →](VERCEL_DEPLOYMENT.md)** (2 minutes)
+📊 **[Cost Analysis →](VERCEL_COST_ANALYSIS.md)** (Plan limits & pricing)
+
+### Deploy from iPhone (Alternative - Google Cloud)
 **No laptop needed!** Deploy directly from Google Cloud Shell on your iPhone.
 
 📱 **[iPhone Quick Start Guide →](QUICKSTART_IPHONE.md)** (5 minutes)
@@ -24,68 +30,55 @@ See the [Local Development Setup](#quick-start) section below.
 ## Architecture
 
 - **Frontend**: Next.js 14 with TypeScript, Tailwind CSS
-- **Backend**: Python FastAPI with async support
+- **Backend**: Next.js API Routes (TypeScript serverless functions)
 - **AI**: Anthropic Claude 3.5 Sonnet (Vision)
 - **Search**: SerpAPI (Google Shopping)
-- **Deployment**: Google Cloud Run (serverless)
+- **Deployment**: Vercel (recommended) or Google Cloud Run
+
+> **Note:** The backend has been converted from Python FastAPI to Next.js API Routes for seamless Vercel deployment. The Python backend in `/backend` is deprecated but kept for reference.
 
 ## Prerequisites
 
 - Node.js 18+ and npm
-- Python 3.9+
 - Anthropic API key ([Get one here](https://console.anthropic.com/))
 - SerpAPI key ([Get one here](https://serpapi.com/))
 
-## Quick Start
+## Quick Start (Local Development)
 
 ### 1. Clone and Setup
 
 ```bash
 git clone <your-repo-url>
-cd my-ai-website
+cd my-ai-website/frontend
 ```
 
-### 2. Backend Setup
+### 2. Install Dependencies
 
 ```bash
-cd backend
-
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Configure environment variables
-cp .env.example .env
-# Edit .env and add your API keys:
-# ANTHROPIC_API_KEY=your_key_here
-# SERPAPI_KEY=your_key_here
-
-# Run the backend
-python main.py
-```
-
-The backend will start on `http://localhost:8000`
-
-### 3. Frontend Setup
-
-Open a new terminal:
-
-```bash
-cd frontend
-
-# Install dependencies
 npm install
+```
 
-# Run the development server
+### 3. Configure Environment Variables
+
+```bash
+cp .env.example .env.local
+```
+
+Edit `.env.local` and add your API keys:
+```env
+ANTHROPIC_API_KEY=sk-ant-xxxxx
+SERPAPI_KEY=your_serpapi_key
+```
+
+### 4. Run Development Server
+
+```bash
 npm run dev
 ```
 
-The frontend will start on `http://localhost:3000`
+The app will start on `http://localhost:3000`
 
-### 4. Usage
+### 5. Usage
 
 1. Open `http://localhost:3000` in your browser
 2. Upload a photo of a clothing item you like
@@ -97,24 +90,33 @@ The frontend will start on `http://localhost:3000`
 
 ```
 my-ai-website/
-├── frontend/                 # Next.js frontend
+├── frontend/                      # Next.js app (frontend + backend)
 │   ├── app/
-│   │   ├── layout.tsx       # Root layout
-│   │   ├── page.tsx         # Main page with state management
-│   │   └── globals.css      # Global styles
+│   │   ├── api/                   # 🆕 Next.js API Routes (serverless functions)
+│   │   │   ├── analyze/
+│   │   │   │   └── route.ts      # Claude Vision API endpoint
+│   │   │   └── search/
+│   │   │       └── route.ts      # SerpAPI endpoint
+│   │   ├── layout.tsx            # Root layout
+│   │   ├── page.tsx              # Main page with state management
+│   │   └── globals.css           # Global styles
 │   ├── components/
-│   │   ├── ImageUpload.tsx  # Drag-and-drop image upload
+│   │   ├── ImageUpload.tsx       # Drag-and-drop image upload
 │   │   ├── ClothingAnalysis.tsx  # AI analysis display
 │   │   └── SearchResults.tsx     # Results grid
+│   ├── .env.example              # Environment variables template
+│   ├── .env.local                # Local env vars (create this, gitignored)
+│   ├── vercel.json               # 🆕 Vercel deployment config
 │   ├── package.json
 │   └── tsconfig.json
 │
-├── backend/                  # FastAPI backend
-│   ├── main.py              # Main API application
-│   ├── requirements.txt     # Python dependencies
-│   └── .env                 # API keys (create from .env.example)
+├── backend/                       # ⚠️ DEPRECATED - Python FastAPI (legacy)
+│   ├── main.py                   # Old Python backend (kept for reference)
+│   └── requirements.txt
 │
-└── README.md                # This file
+├── VERCEL_DEPLOYMENT.md          # 🆕 Vercel deployment guide
+├── VERCEL_COST_ANALYSIS.md       # 🆕 Cost analysis & plan limits
+└── README.md                      # This file
 ```
 
 ## API Endpoints
@@ -196,34 +198,30 @@ Search for similar items based on clothing features.
 
 ## Development
 
-### Frontend Development
+All development happens in the `frontend/` directory:
 
 ```bash
 cd frontend
-npm run dev      # Start dev server
+
+npm run dev      # Start dev server (port 3000)
 npm run build    # Build for production
+npm run start    # Start production server locally
 npm run lint     # Run linter
 ```
 
-### Backend Development
-
-```bash
-cd backend
-source venv/bin/activate
-python main.py   # Start dev server with auto-reload
-
-# Or use uvicorn directly:
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
-```
+The Next.js dev server includes:
+- Hot module replacement (HMR) for instant updates
+- API routes running serverlessly at `/api/*`
+- TypeScript type checking
+- Tailwind CSS compilation
 
 ## Troubleshooting
 
-### CORS Errors
-Make sure the backend is running on port 8000 and the frontend on port 3000. The CORS middleware is configured for these ports.
-
 ### API Key Errors
-- Check that your `.env` file exists in the `backend/` directory
+- Check that your `.env.local` file exists in the `frontend/` directory
 - Verify that API keys are correct and have no extra spaces
+- Ensure variable names match: `ANTHROPIC_API_KEY` and `SERPAPI_KEY`
+- Restart dev server after changing environment variables
 - Ensure you have credits/quota remaining on both APIs
 
 ### Image Upload Issues
@@ -250,14 +248,16 @@ Make sure the backend is running on port 8000 and the frontend on port 3000. The
 ## Tech Stack Details
 
 - **Frontend Framework**: Next.js 14 (App Router)
+- **Backend**: Next.js API Routes (Serverless Functions)
 - **UI Library**: React 18
 - **Styling**: Tailwind CSS 3
 - **Icons**: Lucide React
-- **HTTP Client**: Axios
-- **Backend Framework**: FastAPI
-- **AI Model**: Claude 3.5 Sonnet
+- **AI SDK**: @anthropic-ai/sdk (Official Anthropic SDK)
+- **AI Model**: Claude 3.5 Sonnet (Vision)
+- **Search SDK**: serpapi (Node.js)
 - **Search API**: SerpAPI (Google Shopping)
-- **Language**: TypeScript (frontend), Python 3.9+ (backend)
+- **Language**: TypeScript (full-stack)
+- **Deployment**: Vercel (recommended) or Google Cloud Run
 
 ## License
 
